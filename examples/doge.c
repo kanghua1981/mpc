@@ -6,15 +6,19 @@ int main(int argc, char **argv) {
   
   mpc_parser_t* Adjective = mpc_new("adjective");
   mpc_parser_t* Noun      = mpc_new("noun");
-  mpc_parser_t* Phrase    = mpc_new("phrase");
+  mpc_parser_t* Verb      = mpc_new("verb");
+  mpc_parser_t* Phrase1    = mpc_new("phrase1");
+  mpc_parser_t* Phrase2    = mpc_new("phrase2");
   mpc_parser_t* Doge      = mpc_new("doge");
 
   mpca_lang(MPCA_LANG_DEFAULT,
     " adjective : \"wow\" | \"many\" | \"so\" | \"such\";                 "
     " noun      : \"lisp\" | \"language\" | \"c\" | \"book\" | \"build\"; "
-    " phrase    : <adjective> <noun>;                                     "
-    " doge      : /^/ <phrase>* /$/;                                      ",
-    Adjective, Noun, Phrase, Doge, NULL);
+    " verb      : \"look\" | \"touch\" | \"smell\" | \"find\" | \"search\"; "
+    " phrase1   : <verb> <adjective> <noun>; "
+    " phrase2   : <verb> <verb>;               "
+    " doge      : /^/ <phrase1>* | <phrase2>* /$/ ; ",
+    Adjective, Noun, Verb,Phrase1,Phrase2,Doge, NULL);
   
   if (argc > 1) {
     
@@ -38,7 +42,7 @@ int main(int argc, char **argv) {
   
   }
 
-  mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
+  mpc_cleanup(5, Adjective, Noun,Verb, Phrase1, Doge);
   
   return 0;
   
