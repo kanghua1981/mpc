@@ -490,6 +490,7 @@ static int mpc_input_char(mpc_input_t *i, char c, char **o) {
   char x;
   if (mpc_input_terminated(i)) { return 0; }
   x = mpc_input_getc(i);
+  printf("%c %c\n",x,c);
   return x == c ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);
 }
 
@@ -1055,7 +1056,24 @@ static int mpc_parse_run(mpc_input_t *i, mpc_parser_t *p, mpc_result_t *r, mpc_e
   {
     MPC_FAILURE(mpc_err_fail(i, "Maximum recursion depth exceeded!"));
   }
-
+  #if 0
+  if (p->name !=NULL && strcmp(p->name,"line1") == 0)
+  {
+    printf("mpc_parse_run line1 %s\n",i->buffer);
+  }
+  if (p->name != NULL && strcmp(p->name,"wld") == 0)
+  {
+    printf("mpc_parse_run wld %x\n",i->last);
+  }
+  if (p->name != NULL && strcmp(p->name,"dollar") == 0)
+  {
+    printf("mpc_parse_run dollar %x %d\n",i->last,p->type);
+  }
+  if (p->type == MPC_TYPE_SINGLE)
+  {
+    printf("single:%x\n",p->data.single.x);
+  }
+  #endif
   switch (p->type) {
 
     /* Basic Parsers */
@@ -2005,7 +2023,8 @@ static int mpc_boundary_newline_anchor(char prev, char next) {
 mpc_parser_t *mpc_boundary(void) { return mpc_expect(mpc_anchor(mpc_boundary_anchor), "word boundary"); }
 mpc_parser_t *mpc_boundary_newline(void) { return mpc_expect(mpc_anchor(mpc_boundary_newline_anchor), "start of newline"); }
 
-mpc_parser_t *mpc_whitespace(void) { return mpc_expect(mpc_oneof(" \f\n\r\t\v"), "whitespace"); }
+/*mpc_parser_t *mpc_whitespace(void) { return mpc_expect(mpc_oneof(" \f\n\r\t\v"), "whitespace"); }*/
+mpc_parser_t *mpc_whitespace(void) { return mpc_expect(mpc_oneof(" \f\r\t\v"), "whitespace"); }
 mpc_parser_t *mpc_whitespaces(void) { return mpc_expect(mpc_many(mpcf_strfold, mpc_whitespace()), "spaces"); }
 mpc_parser_t *mpc_blank(void) { return mpc_expect(mpc_apply(mpc_whitespaces(), mpcf_free), "whitespace"); }
 
