@@ -78,7 +78,6 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    mpc_print(wld);
     /*
     mpc_print(wld);
    mpc_print(line1);
@@ -93,8 +92,8 @@ int main(int argc, char** argv) {
   if (ret)
   {
     /*mpc_err_print(r.error);*/
-    mpc_ast_print(r.output);
-    /*lval_read(r.output);*/
+    /*mpc_ast_print(r.output);*/
+    if (r.output !=NULL) lval_read(r.output);
   }
   else
   {
