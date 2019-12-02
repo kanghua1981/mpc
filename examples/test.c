@@ -34,7 +34,6 @@ int main(int argc, char** argv) {
   mpc_parser_t* newline = mpc_new("newline");
   mpc_parser_t* inc = mpc_new("inc");
   mpc_parser_t* wld = mpc_new("wld");
-  mpc_parser_t* dollar = mpc_new("dollar");
 
   char *input = (char*)argv[1];
   if (argc < 2)
@@ -49,17 +48,17 @@ int main(int argc, char** argv) {
 
      /* deps_t  : <deps> <asst> <line1> <newline>*; */ 
      /* line1   : ((<wld> | <inc>) \"\\\\\" <newline>)+ ;*/ 
-     /* wld   :  '$''(' \"wildcard\" <inc> ')';*/ 
      /* space   : /[\\\\f\\\\r\\\\t\\\\v ]*/ 
      /* line1   : ((<wld> | <inc>) \"\\\\\" <newline>)+ ;*/ 
+     /*wld   : <space>* ('$' '(' \"wildcard \")* <inc> (')')*; */
+      /*inc   : /[a-zA-Z0-9_+&-\\/,\\\"]   */ 
   mpce = mpca_lang(MPCA_LANG_DEFAULT,
     "                                    \
       target : /[a-zA-Z0-9_-\\/.]+/;   \
-      value   : /[a-zA-Z0-9_+&-\\/\\\\,()#\\\"=$ ]*/;    \
-      inc   : /[a-zA-Z0-9_+&-\\/,\\\".]*/;    \
-      space   : ' '  ;    \
-      dollar : '$'; \
-      wld   : <space>* ('$' '(' \"wildcard \")* <inc> (')')*; \
+      value   : /[a-zA-Z0-9_+&\\-\\/\\\\,()#\\\"=$. ]*/;    \
+      inc   : /[a-zA-Z0-9_\\/.\\-]*/;    \
+      space   : ' ';    \
+      wld   : <space>* ('$' '(' \"wildcard \")* <inc> (')')* ; \
       newline : \"\n\";  \
       line1   : (<wld> \"\\\\\" <newline>)+ ;    \
       value1  : <line1>;    \
@@ -72,14 +71,13 @@ int main(int argc, char** argv) {
       deps_t  : <deps> <asst> <value1> <newline>*;  \
       parser  : (<cmd_t> | <src_t> | <deps_t>)* | (<target> \":\"<value>)*;\
     ",
-    target,value,inc,wld,space,dollar,newline,line1,value1,cmd,src, deps,asst,cmd_t,src_t,deps_t,parser);
+    target,value,inc,wld,space,newline,line1,value1,cmd,src, deps,asst,cmd_t,src_t,deps_t,parser);
     if (mpce)
     {
         mpc_err_print(mpce);
         return 1;
     }
 
-    mpc_print(dollar);
     mpc_print(wld);
     /*
     mpc_print(wld);
@@ -95,8 +93,8 @@ int main(int argc, char** argv) {
   if (ret)
   {
     /*mpc_err_print(r.error);*/
-    /*mpc_ast_print(r.output);*/
-    lval_read(r.output);
+    mpc_ast_print(r.output);
+    /*lval_read(r.output);*/
   }
   else
   {

@@ -490,7 +490,7 @@ static int mpc_input_char(mpc_input_t *i, char c, char **o) {
   char x;
   if (mpc_input_terminated(i)) { return 0; }
   x = mpc_input_getc(i);
-  printf("%c %c\n",x,c);
+  /*printf("%c %c\n",x,c);*/
   return x == c ? mpc_input_success(i, x, o) : mpc_input_failure(i, x);
 }
 
